@@ -1,0 +1,7 @@
+{
+  "aws_access_key_id": "enter_your_access_key_id",
+  "aws_secret_access_key": "enter_your_secret_access_key",
+  "rds_username": "enter_rds_username",
+  "rds_password": "enter_rds_password",
+  "rds_host": "enter_rds_host"
+}
