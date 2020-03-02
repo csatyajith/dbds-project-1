@@ -4,7 +4,7 @@
     <link href="{{url_for('static', filename='styles.css')}}" rel="stylesheet">
 </head>
 
-<body>
+<body style="text-align:center; font-family:sans-serif;">
 <div id="title_project">
     <h2> Insta Cart Application</h2>
 </div>
@@ -21,10 +21,34 @@
     <br>
     <label for="Text_box"> Query:</label>
     <br>
+    <br>
     <textarea cols="80" id="Text_box" name="text_box" placeholder="Enter the Query here:" rows="10"></textarea>
     <br>
-    <input class="button" type="submit" value="Run">
+    <input class="button" style="font-size:30px; height:200px;width:200px" type="submit" value="Run">
+    <br>
+    <br>
 </form>
+<div id="other text" style="color:Red;">
+    <b> {{other_text}} </b>
+</div>
+<br>
+<table border="1" style="margin: 0 auto; text-align:center;">
+    <thead>
+    {%- for column in columns %}
+    <th>{{ column }}</th>
+    {%- endfor %}
+    </thead>
+
+    <tbody>
+    {%- for row in items %}
+    <tr>
+        {%- for column in columns %}
+        <td>{{ row[column] }}</td>
+        {%- endfor %}
+    </tr>
+    {%- endfor %}
+    </tbody>
+</table>
 </body>
 </html>
      

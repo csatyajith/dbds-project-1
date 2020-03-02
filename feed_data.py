@@ -4,7 +4,7 @@ import pandas as pd
 import smart_open
 import sqlalchemy
 
-with open("local_config.json", "r") as config_file:
+with open("flaskapp/local_config.json", "r") as config_file:
     config = json.load(config_file)
 
 
@@ -28,7 +28,7 @@ def load_instacart_to_sql(file_names, connection):
 if __name__ == '__main__':
     conn = get_sql_alchemy_connection()
     files = ["aisles.csv", "products.csv", "orders.csv", "order_products.csv", "departments.csv"]
-    # load_instacart_to_sql(file_names, conn)
+    load_instacart_to_sql(files, conn)
     for file in files:
         table_name = file[:-4]
         for row in conn.execute("select count(*) from {}".format(table_name)):

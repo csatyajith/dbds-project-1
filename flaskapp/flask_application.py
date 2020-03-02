@@ -4,6 +4,7 @@ import psycopg2
 import sqlalchemy
 from flask import Flask, request, render_template
 from psycopg2 import Error
+from sqlalchemy.exc import ProgrammingError
 
 app = Flask(__name__)
 
@@ -32,7 +33,7 @@ class QueryHandler:
     def execute_redshift_query(self, query):
         cur = self.redshift_connection.cursor()
         cur.execute(query)
-        return cur.fetchall()
+        return cur
 
     def execute_rds_query(self, query):
         return self.rds_connection.execute(query)
@@ -45,26 +46,48 @@ def my_form():
 
 @app.route('/', methods=['POST'])
 def my_form_post():
-    text = request.form['text_box']
     query_lang = None
     if "Query_lang" in request.form:
         query_lang = request.form["Query_lang"]
     if not query_lang:
-        return "Please select a query language"
+        return render_template("frontend_insta.html", other_text="Please select a database")
 
+    text = request.form['text_box']
+    if text is None or len(text) == 0:
+        return render_template("frontend_insta.html", other_text="Please type a query")
     try:
         if query_lang == "MySQL":
             results = list()
-            for row in query_handler.execute_rds_query(text):
+            incomplete_data = False
+            for i, row in enumerate(query_handler.execute_rds_query(text)):
                 results.append(dict(row))
-            return json.dumps(results)
+                if i >= 5000:
+                    incomplete_data = True
+                    break
+            if incomplete_data:
+                return render_template("frontend_insta.html", columns=results[0].keys(), items=results,
+                                       other_text="Query result too large. Showing first 5000 results")
+            return render_template("frontend_insta.html", columns=results[0].keys(), items=results)
         elif query_lang == "Redshift":
-            results = list()
-            for row in query_handler.execute_redshift_query(text):
-                results.append(row)
-            return str(results)
-    except (SyntaxError, Error):
-        return "Query is invalid. Please enter a valid query"
+            cur = query_handler.execute_redshift_query(text)
+            field_names = [i[0] for i in cur.description]
+            result = []
+            incomplete_data = False
+            for n, res in enumerate(cur):
+                if n >= 1000:
+                    incomplete_data = True
+                    break
+                entry = {}
+                for i, field_name in enumerate(field_names):
+                    entry[field_name] = res[i]
+                result.append(entry)
+
+            if incomplete_data:
+                return render_template("frontend_insta.html", columns=result[0].keys(), items=result,
+                                       other_text="Query result too large. Showing first 5000 results")
+            return render_template("frontend_insta.html", columns=result[0].keys(), items=result)
+    except (ProgrammingError, Error):
+        return render_template("frontend_insta.html", other_text="Query is invalid. Please enter a valid query")
 
 
 if __name__ == '__main__':
