@@ -22,7 +22,7 @@ def load_instacart_to_sql(file_names, connection):
         with smart_open.open(access_url, "r") as f:
             df = pd.read_csv(f)
 
-        df.to_sql(file_name[:-4], connection, if_exists="replace")
+        df.to_sql(file_name[:-4], connection, if_exists="replace", index=False)
 
 
 if __name__ == '__main__':

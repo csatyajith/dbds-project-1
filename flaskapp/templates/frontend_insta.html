@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="{{url_for('static', filename='styles.css')}}" rel="stylesheet">
+</head>
+
+<body>
+<div id="title_project">
+    <h2> Insta Cart Application</h2>
+</div>
+<form method="POST">
+    <!-- button 1 -->
+    <input id="MySQL_button" name="Query_lang" type="radio" value="MySQL">
+    <label class="container" for="MySQL_button">MySQL</label>
+
+    <!---button 2-->
+    <input id="Redshift_button" name="Query_lang" type="radio" value="Redshift">
+    <label class="container" for="Redshift_button">Redshift</label>
+
+    <br>
+    <br>
+    <label for="Text_box"> Query:</label>
+    <br>
+    <textarea cols="80" id="Text_box" name="text_box" placeholder="Enter the Query here:" rows="10"></textarea>
+    <br>
+    <input class="button" type="submit" value="Run">
+</form>
+</body>
+</html>
+     
