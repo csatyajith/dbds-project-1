@@ -1,4 +1,5 @@
 import json
+import time
 
 import psycopg2
 import sqlalchemy
@@ -46,6 +47,7 @@ def my_form():
 
 @app.route('/', methods=['POST'])
 def my_form_post():
+    time1 = time.time()
     query_lang = None
     if "Query_lang" in request.form:
         query_lang = request.form["Query_lang"]
@@ -64,10 +66,13 @@ def my_form_post():
                 if i >= 5000:
                     incomplete_data = True
                     break
+            time2 = time.time()
             if incomplete_data:
                 return render_template("frontend_insta.html", columns=results[0].keys(), items=results,
-                                       other_text="Query result too large. Showing first 5000 results")
-            return render_template("frontend_insta.html", columns=results[0].keys(), items=results)
+                                       other_text="Query result too large. Showing first 5000 results",
+                                       perf_time="Time elapsed: {}".format(time2 - time1))
+            return render_template("frontend_insta.html", columns=results[0].keys(), items=results,
+                                   perf_time="Time elapsed: {}".format(time2 - time1))
         elif query_lang == "Redshift":
             cur = query_handler.execute_redshift_query(text)
             field_names = [i[0] for i in cur.description]
@@ -82,10 +87,13 @@ def my_form_post():
                     entry[field_name] = res[i]
                 result.append(entry)
 
+            time2 = time.time()
             if incomplete_data:
                 return render_template("frontend_insta.html", columns=result[0].keys(), items=result,
-                                       other_text="Query result too large. Showing first 5000 results")
-            return render_template("frontend_insta.html", columns=result[0].keys(), items=result)
+                                       other_text="Query result too large. Showing first 5000 results",
+                                       perf_time="Time elapsed: {}".format(time2 - time1))
+            return render_template("frontend_insta.html", columns=result[0].keys(), items=result,
+                                   perf_time="Time elapsed: {}".format(time2 - time1))
     except (ProgrammingError, Error):
         return render_template("frontend_insta.html", other_text="Query is invalid. Please enter a valid query")
 
