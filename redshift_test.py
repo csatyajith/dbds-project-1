@@ -17,3 +17,7 @@ cur.execute("select * from aisles;")
 print(cur.fetchall())
 cur.close()
 connection.close()
+o.order_id, o.user_id, o.order_number, O.order_dow, O.order_hour_of_day, O.days_since_prior_order
+"
+", Op.product_id, Op.add_to_cart_order, Op.reordered, p.product_name, p.aisle_id, p.department_id, a.aisle"
+", d.department

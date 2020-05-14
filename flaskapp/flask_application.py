@@ -45,6 +45,34 @@ def my_form():
     return render_template('frontend_insta.html')
 
 
+@app.route('/recommendations')
+def my_form_2():
+    return render_template("my-form.html")
+
+
+@app.route("/recommendations", methods=['POST'])
+def my_form_2_post():
+    try:
+        print("1")
+        result = query_handler.execute_rds_query(
+            "SELECT * FROM MarketBasket WHERE p1={} or p2={} ORDER BY freq DESC".format(request.form["text_box"],
+                                                                                        request.form["text_box"]))
+        print("2")
+        for r in result:
+            product_1_result = query_handler.execute_rds_query(
+                "select * from products where product_id={}".format(r[1]))
+
+            product_2_result = query_handler.execute_rds_query(
+                "select * from products where product_id={}".format(r[2]))
+
+            return render_template("my-form.html",
+                                   recommended_product="The recommendations are: {}, {}".format(next(product_1_result),
+                                                                                                next(product_2_result)),
+                                   freq="The number of times they occur together is: {}".format(r[3]))
+    except (ProgrammingError, Error):
+        return render_template("my-form.html", freq="Query is invalid. Please enter a valid query")
+
+
 @app.route('/', methods=['POST'])
 def my_form_post():
     time1 = time.time()
@@ -100,4 +128,4 @@ def my_form_post():
 
 if __name__ == '__main__':
     query_handler = QueryHandler()
-    app.run(host="0.0.0.0", port=80)
+    app.run(host="localhost")

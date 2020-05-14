@@ -1,4 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
 <form method="POST">
-    <input name="text">
-    <input type="submit">
+    <br>
+    <br>
+    <label for="Text_box"> Product for which you want a recommendation:</label>
+    <br>
+    <br>
+    <textarea cols="80" id="Text_box" name="text_box"
+              placeholder="Enter the product for which you want a recommendation" rows="10"></textarea>
+    <br>
+    <input class="button" style="font-size:25px; height:45px;width:60px" type="submit" value="Get Recommendations">
+    <br>
+    <br>
 </form>
+<div id="The recommended products together are" style="color:Red;">
+    <b> {{recommended_product}} </b>
+</div>
+<div id="Frequency of occurrence" style="color:Red;">
+    <b> {{freq}} </b>
+</div>
+</body>
